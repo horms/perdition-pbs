@@ -46,14 +46,18 @@ pbs_db_t *pbs_db_open(const char *filename, const int mode){
 
 	status = db_create(&dbp, NULL, 0);
 	if(status != 0) {
-		PBS_DEBUG_DB("db_create", status);
+		VANESSA_LOGGER_DEBUG_DB("db_create", status);
 		return(NULL);
 	}
 	
 
-	status = dbp->open(dbp, filename, NULL, DB_HASH, DB_CREATE, mode);
+	status = dbp->open(dbp, 
+#ifdef HAVE_BDB_4_1
+		      	NULL,
+#endif
+	  		filename, NULL, DB_HASH, DB_CREATE, mode);
 	if(status != 0) {
-		PBS_DEBUG_DB("dbp->open", status);
+		VANESSA_LOGGER_DEBUG_DB("dbp->open", status);
 		dbp->close(dbp, 0);
 		return(NULL);
 	}
@@ -68,7 +72,7 @@ int pbs_db_close(pbs_db_t *db) {
 	dbp = (DB *)db;
 	status = dbp->close(dbp, 0);
 	if(status != 0) {
-		PBS_DEBUG_DB("dbp->close", status);
+		VANESSA_LOGGER_DEBUG_DB("dbp->close", status);
 		return(-1);
 	}
 
@@ -82,7 +86,7 @@ int pbs_db_sync(pbs_db_t *db) {
 	dbp = (DB *)db;
 	status = dbp->sync(dbp, 0);
 	if(status != 0) {
-		PBS_DEBUG_DB("dbp->sync", status);
+		VANESSA_LOGGER_DEBUG_DB("dbp->sync", status);
 		return(-1);
 	}
 
@@ -109,7 +113,7 @@ int pbs_db_put(pbs_db_t *db, void *key, size_t key_len, void *data,
 
 	status = dbp->put(dbp, NULL, &keyp, &datap, 0);
 	if(status != 0) {
-		PBS_DEBUG_DB("dbp->put", status);
+		VANESSA_LOGGER_DEBUG_DB("dbp->put", status);
 		return(-1);
 	}
 
@@ -136,7 +140,7 @@ int pbs_db_get(pbs_db_t *db, void *key, size_t key_len,
 	if(status != 0) {
 		*data = NULL;
 		*data_len = 0;
-		PBS_DEBUG_DB("dbp->get", status);
+		VANESSA_LOGGER_DEBUG_DB("dbp->get", status);
 		return(-1);
 	}
 
@@ -160,7 +164,7 @@ int pbs_db_del(pbs_db_t *db, void *key, size_t key_len)
 
 	status = dbp->del(dbp, NULL, &keyp, 0);
 	if(status != 0) {
-		PBS_DEBUG_DB("dbp->get", status);
+		VANESSA_LOGGER_DEBUG_DB("dbp->get", status);
 		return(-1);
 	}
 
@@ -183,7 +187,7 @@ int pbs_db_traverse(pbs_db_t *db,
 
 	status = dbp->cursor(dbp, NULL, &cursorp, 0);
 	if(status != 0) {
-		PBS_DEBUG_DB("db->cursor", status);
+		VANESSA_LOGGER_DEBUG_DB("db->cursor", status);
 		return(-1);
 	}
 
@@ -196,14 +200,14 @@ int pbs_db_traverse(pbs_db_t *db,
 			break;
 		}
 		else if(status != 0) {
-			PBS_DEBUG_DB("cursor->c_get", status);
+			VANESSA_LOGGER_DEBUG_DB("cursor->c_get", status);
 			return_status = -1;
 			break;
 		}
 
 		if(func(cursorp, keyp.data, keyp.size, datap.data, datap.size,
 					func_data) < 0) {
-			PBS_DEBUG("func");
+			VANESSA_LOGGER_DEBUG("func");
 			return_status=-1;
 			break;
 		}
@@ -211,7 +215,7 @@ int pbs_db_traverse(pbs_db_t *db,
 
 	status = cursorp->c_close(cursorp);
 	if(status != 0) {
-		PBS_DEBUG_DB("cursor->c_close", status);
+		VANESSA_LOGGER_DEBUG_DB("cursor->c_close", status);
 		return_status = -1;
 	}
 	
@@ -230,7 +234,7 @@ int pbs_db_traverse_func_show_record(void *db, void *key, size_t key_len,
 	width=(func_data==NULL)?0:*(int *)func_data;
 
 	if(pbs_record_show(ip, time, width) < 0) {
-		PBS_DEBUG("pbs_record_show");
+		VANESSA_LOGGER_DEBUG("pbs_record_show");
 		return(-1);
 	}
 
@@ -260,11 +264,11 @@ int pbs_db_traverse_func_expire_record(void *db, void *key, size_t key_len,
 
 	status = cursorp->c_del(cursorp, 0);
 	if(status != 0) {
-		PBS_DEBUG_DB("cursor->c_del", status);
+		VANESSA_LOGGER_DEBUG_DB("cursor->c_del", status);
 		return(-1);
 	}
 
-	PBS_INFO_UNSAFE("Expired %s\n", ip);
+	VANESSA_LOGGER_INFO_UNSAFE("Expired %s\n", ip);
 
 	return(0);
 }

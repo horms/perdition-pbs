@@ -63,6 +63,21 @@ AC_TYPE_SIGNAL
 AC_FUNC_STRFTIME
 AC_CHECK_FUNCS([localtime_r memset regcomp setenv setlocale strcasecmp strchr strerror])
 
+# More BDB Stupidity.
+# It seems that function call arguments actually vary between versions.
+# Why do we use this crap anyway?
+
+AC_MSG_CHECKING("For Berkley DB Version 4.1 and above");
+AC_TRY_RUN(
+	[ #include <db.h>
+		int main(int arc, char **argv) {
+		exit((DB_VERSION_MAJOR>=4 && DB_VERSION_MINOR>=1)?0:1);} ],
+	[ AC_DEFINE(HAVE_BDB_4_1, 1, Berkely DB Version 4.1 and above)
+		AC_MSG_RESULT("yes") ],
+	[ AC_MSG_RESULT("no") ]
+)
+
+
 ######################################################################
 # Dmalloc debugging
 

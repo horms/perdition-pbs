@@ -41,25 +41,25 @@ int pbs_record_db_put(pbs_db_t *db, const char *ip, const char *prefix,
 
 	ip_fixed = pbs_record_fix_key(ip, prefix, &buf, &buf_len);
 	if(ip_fixed == NULL) {
-		PBS_DEBUG("pbs_record_fix_key");
+		VANESSA_LOGGER_DEBUG("pbs_record_fix_key");
 		goto leave;
 	}
 
 	time_ip = pbs_record_prefix_key(ip_fixed, PBS_TIME_PREFIX);
 	if(time_ip == NULL) {
-		PBS_DEBUG("pbs_record_prefix_key");
+		VANESSA_LOGGER_DEBUG("pbs_record_prefix_key");
 		goto leave;
 	}
 
 	if(pbs_db_put(db, (char *)ip_fixed, strlen(ip_fixed)+1,
 				(char *)status, strlen(status)+1) < 0) {
-		PBS_DEBUG("pbs_db_put");
+		VANESSA_LOGGER_DEBUG("pbs_db_put");
 		goto leave;
 	}
 
 	if(pbs_db_put(db, (void *)time_ip, strlen(time_ip)+1,
 				(void *)&expire, sizeof(expire)) < 0) {
-		PBS_DEBUG("pbs_db_put");
+		VANESSA_LOGGER_DEBUG("pbs_db_put");
 		pbs_db_del(db, (char *)ip_fixed, strlen(ip_fixed)+1);
 		goto leave;
 	}
@@ -89,14 +89,14 @@ int pbs_record_db_get(pbs_db_t *db, const char *ip, const char *prefix,
 
 	ip_fixed = pbs_record_fix_key(ip, prefix, &buf, &buf_len);
 	if(ip_fixed == NULL) {
-		PBS_DEBUG("pbs_record_fix_key");
+		VANESSA_LOGGER_DEBUG("pbs_record_fix_key");
 		goto leave;
 	}
 
 	if(status != NULL && status_len != NULL) {
 		if(pbs_db_get(db, (void *)ip_fixed, strlen(ip_fixed)+1,
 					(void **)status, status_len) < 0) {
-			PBS_DEBUG("pbs_db_get");
+			VANESSA_LOGGER_DEBUG("pbs_db_get");
 			goto leave;
 		}
 		if(*status_len > 0) {
@@ -107,12 +107,12 @@ int pbs_record_db_get(pbs_db_t *db, const char *ip, const char *prefix,
 	if(expire != NULL) {
 		time_ip = pbs_record_prefix_key(ip_fixed, PBS_TIME_PREFIX);
 		if(time_ip == NULL) {
-			PBS_DEBUG("pbs_record_prefix_key");
+			VANESSA_LOGGER_DEBUG("pbs_record_prefix_key");
 			goto leave;
 		}
 		if(pbs_db_get(db, (void *)time_ip, strlen(time_ip)+1,
 					(void **)&dummy, &dummy_len) < 0) {
-			PBS_DEBUG("pbs_db_get");
+			VANESSA_LOGGER_DEBUG("pbs_db_get");
 			goto leave;
 		}
 		*expire = *dummy;
@@ -140,23 +140,23 @@ int pbs_record_db_del(pbs_db_t *db, const char *ip, const char *prefix) {
 
 	ip_fixed = pbs_record_fix_key(ip, prefix, &buf, &buf_len);
 	if(ip_fixed == NULL) {
-		PBS_DEBUG("pbs_record_fix_key");
+		VANESSA_LOGGER_DEBUG("pbs_record_fix_key");
 		goto leave;
 	}
 
 	time_ip = pbs_record_prefix_key(ip_fixed, PBS_TIME_PREFIX);
 	if(time_ip == NULL) {
-		PBS_DEBUG("pbs_record_prefix_key");
+		VANESSA_LOGGER_DEBUG("pbs_record_prefix_key");
 		goto leave;
 	}
 
 	if(pbs_db_del(db, (char *)ip_fixed, strlen(ip_fixed)+1) < 0) {
-		PBS_DEBUG("pbs_db_get");
+		VANESSA_LOGGER_DEBUG("pbs_db_get");
 		goto leave;
 	}
 
 	if(pbs_db_del(db, (char *)time_ip, strlen(time_ip)+1) < 0) {
-		PBS_DEBUG("pbs_db_get");
+		VANESSA_LOGGER_DEBUG("pbs_db_get");
 		goto leave;
 	}
 

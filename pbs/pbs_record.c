@@ -51,7 +51,7 @@ int pbs_record_show(char *ip, time_t time, size_t width) {
 	char buf[PBS_DATE_WIDTH];
 
 	if(localtime_r(&time, &tm) == NULL) {
-		PBS_DEBUG_ERRNO("localtime_r");
+		VANESSA_LOGGER_DEBUG_ERRNO("localtime_r");
 		return(-1);
 	}
 	strftime(buf, PBS_DATE_WIDTH-1, "%c", &tm);
@@ -67,7 +67,7 @@ int pbs_record_hrule(size_t width) {
 
 	buffer = malloc(rule_width+1);
 	if(buffer == NULL) {
-		PBS_DEBUG_ERRNO("malloc");
+		VANESSA_LOGGER_DEBUG_ERRNO("malloc");
 		return(-1);
 	}
 
@@ -88,11 +88,11 @@ int pbs_record_title(size_t width) {
 
 int pbs_record_top(size_t width) {
 	if(pbs_record_title(width) < 0) {
-		PBS_DEBUG("pbs_record_title");
+		VANESSA_LOGGER_DEBUG("pbs_record_title");
 		return(-1);
 	}
 	if(pbs_record_hrule(width) < 0) {
-		PBS_DEBUG("pbs_record_title");
+		VANESSA_LOGGER_DEBUG("pbs_record_title");
 		return(-1);
 	}
 
@@ -123,7 +123,7 @@ char *pbs_record_prefix_key(const char *key, const char *prefix) {
 
 	new_key = (char *)malloc(new_key_len);
 	if(new_key == NULL) {
-		PBS_DEBUG_ERRNO("realloc");
+		VANESSA_LOGGER_DEBUG_ERRNO("realloc");
 		return(NULL);
 	}
 	memset(new_key, 0, new_key_len);
@@ -149,7 +149,7 @@ const char *pbs_record_fix_key(const char *key, const char *prefix,
 		*buf_len = prefix_len + k_len + 1;
 		*buf = realloc(*buf, *buf_len);
 		if(*buf == NULL) {
-			PBS_DEBUG_ERRNO("realloc");
+			VANESSA_LOGGER_DEBUG_ERRNO("realloc");
 			return(NULL);
 		}
 	}

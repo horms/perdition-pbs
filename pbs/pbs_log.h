@@ -54,35 +54,7 @@ extern int errno;
  * should be safe to use with user derived input.
  */
 
-#define PBS_LOG_UNSAFE(priority, fmt, args...) \
-  vanessa_logger_log(pbs_vl, priority, fmt, ## args)
-
-#define PBS_LOG(priority, str) \
-  vanessa_logger_log(pbs_vl, priority, "%s", str)
-
-#define PBS_INFO_UNSAFE(fmt, args...) \
-  vanessa_logger_log(pbs_vl, LOG_INFO, fmt, ## args)
-
-#define PBS_INFO(str) \
-  vanessa_logger_log(pbs_vl, LOG_INFO, "%s", str)
-
-#define PBS_ERR_UNSAFE(fmt, args...) \
-  vanessa_logger_log(pbs_vl, LOG_ERR, fmt, ## args)
-
-#define PBS_ERR(str) \
-  vanessa_logger_log(pbs_vl, LOG_ERR, "%s", str)
-
-#define PBS_DEBUG_UNSAFE(fmt, args...) \
-  vanessa_logger_log(pbs_vl, LOG_DEBUG, __FUNCTION__ ": " fmt, ## args)
-
-#define PBS_DEBUG(str) \
-  vanessa_logger_log(pbs_vl, LOG_DEBUG, __FUNCTION__ ": %s", str)
-
-#define PBS_DEBUG_ERRNO(s) \
-  vanessa_logger_log(pbs_vl, LOG_DEBUG, "%s: %s: %s", \
-    __FUNCTION__, s, strerror(errno))
-
-#define PBS_DEBUG_DB(s, err) \
+#define VANESSA_LOGGER_DEBUG_DB(s, err) \
   vanessa_logger_log(pbs_vl, LOG_DEBUG, "%s: %s: %s", \
     __FUNCTION__, s, pbs_db_strerror(err))
 

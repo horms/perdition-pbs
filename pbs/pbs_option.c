@@ -102,7 +102,7 @@ pbs_options_t *pbs_options_parse(int argc, char **argv) {
 
 	opt = malloc(sizeof(pbs_options_t));
 	if(opt == NULL) {
-		PBS_DEBUG_ERRNO("malloc");	
+		VANESSA_LOGGER_DEBUG_ERRNO("malloc");	
 		return(NULL);
 	}
 
@@ -297,7 +297,7 @@ void pbs_usage(int exit_status){
 }
 
 void pbs_options_log(pbs_options_t *opt){
-	PBS_INFO_UNSAFE(
+	VANESSA_LOGGER_INFO_UNSAFE(
 		"db_file=\"%s\" "
 		"debug=\"%s\" "
 		"group=\"%s\" "
@@ -344,7 +344,7 @@ int pbs_mode_int(const char *mode) {
 		return(PBS_MODE_SETENV);
 	}
 
-	PBS_DEBUG_UNSAFE("unknown mode: \"%s\"", mode);
+	VANESSA_LOGGER_DEBUG_UNSAFE("unknown mode: \"%s\"", mode);
 	return(-1);
 }
 
@@ -364,6 +364,6 @@ const char *pbs_mode_str(const int mode) {
 		case PBS_MODE_SETENV:
 		      return(PBS_MODE_SETENV_STR);
 	}
-	PBS_DEBUG_UNSAFE("unkown mode: %d", mode);
+	VANESSA_LOGGER_DEBUG_UNSAFE("unkown mode: %d", mode);
 	return(NULL);
 }
