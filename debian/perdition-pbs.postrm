@@ -4,7 +4,6 @@
 #DEBHELPER#
 
 if [ "$1" = "remove" ]; then
-	ldconfig
 	update-rc.d -f perdition-pbs remove >/dev/null
 fi
 

@@ -4,7 +4,6 @@
 #DEBHELPER#
 
 if [ "$1" = "configure" ]; then
-    ldconfig
     if [ -d /usr/doc -a ! -e /usr/doc/perdition-pbs -a -d /usr/share/doc/perdition-pbs ]; then
       ln -sf ../share/doc/perdition-pbs /usr/doc/perdition-pbs
     fi
