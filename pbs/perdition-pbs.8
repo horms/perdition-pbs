@@ -3,7 +3,7 @@
 .\" Horms                                             horms@vergenet.net
 .\"
 .\" perdition-pbs
-.\" Mail retrieval proxy server
+.\" POP before SMTP Tools
 .\" Copyright (C) 1999-2002  Horms <horms@vergenet.net>
 .\" 
 .\" This program is free software; you can redistribute it and/or
@@ -47,6 +47,10 @@ perdition-pbs \- POP3 and IMAP4 proxy server
 \fBperdition-pbs-purge\fP [options]
 .br
 .SH DESCRIPTION
+POP before SMTP is the process by which users are permitted to
+relay mail using SMTP for a period of time after they have authenticated
+themselves to retrieve mail via POP or IMAP.
+.P
 \fBperdition-pbs\fP is toolkit to provide POP before SMTP support. It may
 be used with any POP server that provides logs that include the
 connection's source IP address when a user is authenticated. This includes
@@ -218,7 +222,7 @@ If the entry is does not begin with the prefix as set by the
 .SH PURGE MODE
 Delete all entries in the database.
 .SH SEE ALSO
-perdition(8), sendmail(8), qmail(8)
+perdition(8), sendmail(8), qmail(8), tail(1)
 .SH AUTHOR
 .br
 Horms <horms@vergenet.net>
