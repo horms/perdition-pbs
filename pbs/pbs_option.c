@@ -51,10 +51,35 @@
 #define STR_NULL_SAFE(string) (string==NULL)?STR_NULL:string
 #define BIN_OPT_STR(opt) ((opt)?"on":"off")
 
+
+/**********************************************************************
+ * str_basename
+ * Find the filename of a fully qualified path to a file
+ * pre: filename: name of file to find basename of
+ * post: basename of filename is returned
+ * return: NULL if filename is NULL
+ *         pointer within filename pointing to basename of filename
+ *
+ * Not 8 bit clean
+ **********************************************************************/
+
+const char *str_basename(const char *filename){
+    char *result;
+
+    if(filename==NULL){
+      return(NULL);
+    }
+    
+    result=strrchr(filename, '/');
+
+    return((result==NULL)?filename:result+1);
+}
+
 pbs_options_t *pbs_options_parse(int argc, char **argv) {
 	char c;
 	pbs_options_t *opt;
 	poptContext context;
+	const char *basename;
 
 	static struct poptOption options[] =
 	{
@@ -89,12 +114,33 @@ pbs_options_t *pbs_options_parse(int argc, char **argv) {
 	opt->timeout = PBS_DEFAULT_TIMEOUT;
 	opt->prefix = PBS_DEFAULT_PREFIX;
 	opt->log_level = PBS_DEFAULT_LOG_LEVEL;
-	opt->mode = PBS_DEFAULT_MODE;
 	opt->user = PBS_DEFAULT_USERNAME;
 	opt->group = PBS_DEFAULT_GROUP;
+	opt->mode = PBS_DEFAULT_MODE;
 
   	if(argc==0 || argv==NULL) return(opt);
 
+	basename = str_basename(argv[0]);
+
+	if(strcmp("perdition-pbs-setenv", basename) == 0) {
+		opt->mode = PBS_MODE_SETENV;
+	}
+	else if(strcmp("perdition-pbs-list", basename) == 0) {
+		opt->mode = PBS_MODE_LIST;
+	}
+	else if(strcmp("perdition-pbs-insert", basename) == 0) {
+		opt->mode = PBS_MODE_INSERT;
+	}
+	else if(strcmp("perdition-pbs-remove", basename) == 0) {
+		opt->mode = PBS_MODE_REMOVE;
+	}
+	else if(strcmp("perdition-pbs-setenv", basename) == 0) {
+		opt->mode = PBS_MODE_REMOVE;
+	}
+	else if(strcmp("perdition-pbs-purge", basename) == 0) {
+		opt->mode = PBS_MODE_PURGE;
+	}
+	
   	context = poptGetContext(LOG_IDENT, argc, (const char **)argv, 
 			options, 0);
 
@@ -225,8 +271,7 @@ void pbs_usage(int exit_status){
         "    -u, --user: USERNAME User to run as\n"
 	"                         (default \"%s\")\n"
 	"\n"
-	"Notes: Default for binary flags is off\n"
-	"       Keys are not used in \"daemon\" or \"purge\" mode.\n",
+	"Notes: Default for binary flags is off\n",
 	STR_NULL_SAFE(pbs_mode_str(PBS_DEFAULT_MODE)),
 	STR_NULL_SAFE(PBS_DEFAULT_DB_FILENAME),
 	STR_NULL_SAFE(PBS_DEFAULT_GROUP),

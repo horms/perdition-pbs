@@ -40,3 +40,15 @@ pbs_record.c pbs_record.h
 
 LDADD = -ldb -lpopt \
 -lvanessa_logger -lvanessa_socket @dmalloc_lib@
+
+install-exec-hook:
+	for i in deamon list insert remove setenv purge; do \
+                (cd $(DESTDIR)$(sbindir) && rm -f perdition-pbs-$$i && \
+                        ln -sf perdition-pbs perdition-pbs-$$i); \
+        done
+
+uninstall-local:
+	for i in deamon list insert remove setenv purge; do \
+                rm -f $(DESTDIR)$(sbindir)/perditioni-pbs-$$i; \
+        done
+
