@@ -3,7 +3,7 @@ Build-Depends: libvanessa-logger-dev (>= 0.0.2), libvanessa-socket-dev (>= 0.0.3
 Section: mail
 Priority: optional
 Maintainer: Simon Horman <horms@vergenet.net>
-Standards-Version: 3.5.2
+Standards-Version: 3.5.10
 
 Package: perdition-pbs
 Architecture: any

@@ -35,11 +35,11 @@ test -f $DAEMON || exit 0
 
 case "$1" in
   start)
-    start-stop-daemon --start --verbose --name perdition-pbs \
+    start-stop-daemon --start --verbose \
         --exec @prefix@/sbin/perdition-pbs -- $FLAGS
     ;;
   stop)
-    start-stop-daemon --stop --verbose --name perdition-pbs
+    start-stop-daemon --stop --verbose \
         --exec @prefix@/sbin/perdition-pbs
   restart)
     $0 stop 

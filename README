@@ -39,11 +39,11 @@ ftp://ftp.gnu.org/pub/gnu/gettext/ and mirrors.
     
 perdition requires the vanessa_logger generic logging library
 available from
-ftp://ftp.vergenet.net/pub/vanessa/vanessa_logger/ and mirrors.
+http://www.vergenet.net/linux/vanessa/download/vanessa_logger/ and mirrors.
 
 perdition requires the vanessa_socket TCP socket interface library
 available from
-ftp://ftp.vergenet.net/pub/vanessa/vanessa_socket/ and mirrors.
+http://www.vergenet.net/linux/vanessa/download/vanessa_socket/ and mirrors.
 
 perdition requires the berkely DB library available from
 http://www.sleepycat.com/ and mirrors
