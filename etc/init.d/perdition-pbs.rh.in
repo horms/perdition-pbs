@@ -36,6 +36,11 @@
 # Source function library.
 . /etc/rc.d/init.d/functions
 
+if [ -f /etc/sysconfig/perdition-pbs ]; then
+	. /etc/sysconfig/perdition-pbs
+fi
+
+
 # See how we were called.
 case "$1" in
   start)
@@ -52,7 +57,7 @@ case "$1" in
 	$0 start
         ;;
   stop)
-       	echo -n "Shutting down perdition-pbs services (POP3): "
+       	echo -n "Shutting down perdition-pbs services: "
 	killproc perdition-pbs
 	rm -f /var/lock/subsys/perdition-pbs
        	echo

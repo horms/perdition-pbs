@@ -1,0 +1,8 @@
+######################################################################
+# /etc/sysconfig/perdition-pbs
+#
+# Run time configuration parameters for perdition-pbs
+######################################################################
+
+# Command line parameters to pass to perdition-pbs
+FLAGS=

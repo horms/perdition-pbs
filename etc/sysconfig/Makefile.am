@@ -23,8 +23,4 @@
 #
 ######################################################################
 
-SUBDIRS = init.d sysconfig
-
-EXTRA_DIST = 
-
-m4datadir = $(datadir)/aclocal
+EXTRA_DIST = perdition-pbs

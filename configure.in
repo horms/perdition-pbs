@@ -102,8 +102,12 @@ AC_OUTPUT(
 Makefile 
 pbs/Makefile 
 etc/Makefile 
+etc/sysconfig/Makefile 
 etc/init.d/Makefile 
 etc/init.d/perdition-pbs.debian
 etc/init.d/perdition-pbs.rh
 debian/Makefile
+packaging/Makefile
+packaging/lsb/Makefile
+packaging/lsb/perdition-pbs.spec
 INSTALL)

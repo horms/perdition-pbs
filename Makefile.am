@@ -23,7 +23,7 @@
 #
 ######################################################################/
 
-SUBDIRS = pbs etc
+SUBDIRS = pbs etc packaging debian
 
 EXTRA_DIST = \
 configure \
