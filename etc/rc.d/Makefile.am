@@ -1,10 +1,10 @@
 ######################################################################
-# Makefile.am                                                 May 2002
+# Makefile.am                                            November 2000
 # Horms                                             horms@vergenet.net
 #
-# Perdition PBS
-# Pop Before SMTP Tools
-# Copyright (C) 2002 Horms
+# perdition-pbs
+# Mail retrieval proxy server
+# Copyright (C) 1999-2002  Horms <horms@vergenet.net>
 # 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -21,19 +21,10 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
 # 02111-1307  USA
 #
-######################################################################/
-
-SUBDIRS = pbs etc
+######################################################################
 
 EXTRA_DIST = \
-configure \
-configure.in \
-README \
-TODO \
-autogen.sh \
-INSTALL.in \
-INSTALL \
-TODO
-
-clean-local:
-	rm -f build-stamp
+  perdition-pbs.rh \
+  perdition-pbs.rh.in \
+  perdition-pbs.debian \
+  perdition-pbs.debian.in

@@ -98,4 +98,11 @@ AC_DEFINE_UNQUOTED(WITH_GROUP, "$perdition_group", Group to run perdition
 as )
 
 
-AC_OUTPUT(Makefile pbs/Makefile INSTALL)
+AC_OUTPUT(
+Makefile 
+pbs/Makefile 
+etc/Makefile 
+etc/rc.d/Makefile 
+etc/rc.d/perdition-pbs.debian
+etc/rc.d/perdition-pbs.rh
+INSTALL)

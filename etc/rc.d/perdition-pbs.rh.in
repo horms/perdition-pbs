@@ -1,0 +1,65 @@
+#!/bin/sh
+######################################################################
+# Version:                                                    May 2002
+# Author:                                   Horms <horms@vergenet.net>
+#
+# Red Hat init script for perdition-pbs
+# Adapted from: Tomasz K³oczko, <kloczek@rudy.mif.pg.gda.pl>
+#               Michele Marziani <marziani@fe.infn.it>
+#
+# perdition-pbs:
+# chkconfig: 2345 81 29
+# description: Perdition-PBS provides Tools for doing \
+# POP before SMTP
+#
+# perdition-pbs
+# POP Before SMTP Tools
+# Copyright (C) 2002  Horms
+# 
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
+# 02111-1307  USA
+#
+######################################################################
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# See how we were called.
+case "$1" in
+  start)
+       	echo -n "Starting perdition-pbs services: "
+	daemon @prefix@/sbin/perdition-pbs-daemon $FLAGS
+	touch /var/lock/subsys/perdition-pbs-daemon
+       	echo
+	;;
+  status)
+        status perdition-pbs-daemon
+	;;
+  restart|reload)
+        $0 stop
+	$0 start
+        ;;
+  stop)
+       	echo -n "Shutting down perdition-pbs services (POP3): "
+	killproc perdition-pbs-daemon
+	rm -f /var/lock/subsys/perdition-pbs-daemon
+       	echo
+	;;
+  *)
+	echo "Usage: perdition-pbs {start|stop|status|restart|reload}"
+	exit 1
+esac
+
+exit 0

@@ -2,9 +2,9 @@
 # Makefile.am                                                 May 2002
 # Horms                                             horms@vergenet.net
 #
-# Perdition PBS
-# Pop Before SMTP Tools
-# Copyright (C) 2002 Horms
+# perdition-pbs
+# POP before SMTP Tools
+# Copyright (C) 2002  Horms <horms@vergenet.net>
 # 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -21,19 +21,10 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
 # 02111-1307  USA
 #
-######################################################################/
+######################################################################
 
-SUBDIRS = pbs etc
+SUBDIRS = rc.d
 
-EXTRA_DIST = \
-configure \
-configure.in \
-README \
-TODO \
-autogen.sh \
-INSTALL.in \
-INSTALL \
-TODO
+EXTRA_DIST = 
 
-clean-local:
-	rm -f build-stamp
+m4datadir = $(datadir)/aclocal
