@@ -547,12 +547,8 @@ static void pbs_reread_handler(int sig) {
 
 static int do_mode_list(pbs_db_t *db, const char **key, const char *prefix) {
 	size_t width;
-	time_t *time;
-	size_t len;
-	size_t buf_len = 0;
+	time_t time;
 	const char **k;
-	const char *k_fixed;
-	char *buf = NULL;
 
 	width = pbs_key_width(prefix);
 
@@ -572,22 +568,13 @@ static int do_mode_list(pbs_db_t *db, const char **key, const char *prefix) {
 
 
 	for(k = key ; *k != NULL; k++) {
-		k_fixed = pbs_record_fix_key(*k, prefix, &buf, &buf_len);
-		if(k_fixed == NULL) {
-			PBS_DEBUG("pbs_record_fix_key");
-			return(-1);
-		}
-		if(pbs_db_get(db, (char *)k_fixed, strlen(k_fixed)+1, 
-				(void **)&time, &len) < 0) {
+		if(pbs_record_db_get(db, *k, prefix, &time, 
+					NULL, NULL) < 0) {
 			pbs_record_show_str((char *)*k, "Not found", width);
 		}
 		else {
-			pbs_record_show((char *)*k, *time, width);
+			pbs_record_show((char *)*k, time, width);
 		}
-	}
-
-	if(buf != NULL) {
-		free(buf);
 	}
 
 	return(0);
@@ -598,10 +585,7 @@ static int do_mode_list(pbs_db_t *db, const char **key, const char *prefix) {
 static int do_mode_remove(pbs_db_t *db, const char **key, const char *prefix,
 		int quiet) {
 	size_t width;
-	size_t buf_len = 0;
 	const char **k;
-	const char *k_fixed;
-	char *buf = NULL;
 	char *response;
 
 	if(key == NULL) {
@@ -617,13 +601,7 @@ static int do_mode_remove(pbs_db_t *db, const char **key, const char *prefix,
 	}
 
 	for(k = key ; *k != NULL; k++) {
-
-		k_fixed = pbs_record_fix_key(*k, prefix, &buf, &buf_len);
-		if(k_fixed == NULL) {
-			PBS_DEBUG("pbs_record_fix_key");
-			return(-1);
-		}
-		if(pbs_db_del(db, (char *)k_fixed, strlen(k_fixed)+1) < 0) {
+		if(pbs_record_db_del(db, *k, prefix) < 0) {
 			response = "Not found";
 		}
 		else {
@@ -632,10 +610,6 @@ static int do_mode_remove(pbs_db_t *db, const char **key, const char *prefix,
 		if(!quiet) {
 			pbs_record_show_str((char *)*k, response, width);
 		}
-	}
-
-	if(buf != NULL) {
-		free(buf);
 	}
 
 	return(0);
@@ -705,7 +679,6 @@ static int do_mode_setenv(pbs_db_t *db, const int fd,  const char *prefix,
 	char *buf = NULL;
 	time_t expire;
 	time_t now;
-	size_t len;
 	size_t buf_len = 0;
 
 	if(argv == NULL) {
@@ -735,12 +708,11 @@ static int do_mode_setenv(pbs_db_t *db, const int fd,  const char *prefix,
 	}
 
 	now = time(NULL);
-	if(pbs_db_get(db, (char *)peername_str_fixed, 
-			strlen(peername_str_fixed)+1, 
-			(void **)&expire, &len) < 0) {
+	if(pbs_record_db_get(db, peername_str_fixed, prefix,
+			&expire, NULL, NULL) < 0) {
 		PBS_INFO_UNSAFE("No (Not in database): %s", peername_str);
 	}
-	else if (difftime(now, expire) < 0) {
+	else if (difftime(now, expire) > 0) {
 		PBS_INFO_UNSAFE("No (Expired): %s", peername_str);
 	}
 	else {

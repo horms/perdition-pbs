@@ -82,7 +82,8 @@ int pbs_record_db_get(pbs_db_t *db, const char *ip, const char *prefix,
 	const char *ip_fixed;
 	char *time_ip = NULL;
 	size_t buf_len = 0;
-	size_t dummy;
+	size_t dummy_len;
+	time_t *dummy;
 	char *buf = NULL;
 	int exit_status = -1;
 
@@ -92,25 +93,29 @@ int pbs_record_db_get(pbs_db_t *db, const char *ip, const char *prefix,
 		goto leave;
 	}
 
-	time_ip = pbs_record_prefix_key(ip_fixed, PBS_TIME_PREFIX);
-	if(time_ip == NULL) {
-		PBS_DEBUG("pbs_record_prefix_key");
-		goto leave;
+	if(status != NULL && status_len != NULL) {
+		if(pbs_db_get(db, (void *)ip_fixed, strlen(ip_fixed)+1,
+					(void **)status, status_len) < 0) {
+			PBS_DEBUG("pbs_db_get");
+			goto leave;
+		}
+		if(*status_len > 0) {
+			*status_len=*status_len-1;
+		}
 	}
 
-	if(pbs_db_get(db, (void *)ip_fixed, strlen(ip_fixed)+1,
-				(void **)status, status_len) < 0) {
-		PBS_DEBUG("pbs_db_get");
-		goto leave;
-	}
-	if(*status_len > 0) {
-		*status_len=*status_len-1;
-	}
-
-	if(pbs_db_get(db, (void *)time_ip, strlen(time_ip)+1,
-				(void **)expire, &dummy) < 0) {
-		PBS_DEBUG("pbs_db_get");
-		goto leave;
+	if(expire != NULL) {
+		time_ip = pbs_record_prefix_key(ip_fixed, PBS_TIME_PREFIX);
+		if(time_ip == NULL) {
+			PBS_DEBUG("pbs_record_prefix_key");
+			goto leave;
+		}
+		if(pbs_db_get(db, (void *)time_ip, strlen(time_ip)+1,
+					(void **)&dummy, &dummy_len) < 0) {
+			PBS_DEBUG("pbs_db_get");
+			goto leave;
+		}
+		*expire = *dummy;
 	}
 
 	exit_status = 0;
