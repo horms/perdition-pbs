@@ -76,5 +76,26 @@ AC_ARG_WITH(
 
 )
 
+######################################################################
+# User and Group to run as
+
+AC_ARG_WITH(
+  user,
+  [  --with-user=USER        Run perdition-pbs as USER. [default=nobody]  ],
+  [ perdition_user="$withval" ],
+  [ perdition_user="nobody" ],
+)
+AC_DEFINE_UNQUOTED(WITH_USER, "$perdition_user", User to run perdition as )
+
+
+AC_ARG_WITH(
+  group,
+  [  --with-group=GROUP      Run perdition-pbs as GROUP. [default=nobody]  ],
+  [ perdition_group="$withval" ],
+  [ perdition_group="nobody" ],
+)
+AC_DEFINE_UNQUOTED(WITH_GROUP, "$perdition_group", Group to run perdition
+as )
+
 
 AC_OUTPUT(Makefile pbs/Makefile INSTALL)

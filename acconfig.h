@@ -23,5 +23,11 @@
  *
  **********************************************************************/
 
+/* User to run perdition as */
+/* #define WITH_USER "nobody" */
+
+/* Group to run perdition as */
+/* #define WITH_GROUP "nobody" */
+
 /* Should we use DMALLOC */
 /* #define WITH_DMALLOC 1 */

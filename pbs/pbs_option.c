@@ -68,6 +68,8 @@ pbs_options_t *pbs_options_parse(int argc, char **argv) {
 		{"perfix",        'p', POPT_ARG_STRING, NULL, 'p'},
 		{"quiet",         'q', POPT_ARG_NONE,   NULL, 'q'},
 		{"regex",         'r', POPT_ARG_STRING, NULL, 'r'},
+		{"user",          'u', POPT_ARG_STRING, NULL, 'u'},
+		{"group",         'g', POPT_ARG_STRING, NULL, 'g'},
 		{NULL,             0,  0,               NULL,  0 }
 	};
 
@@ -88,6 +90,8 @@ pbs_options_t *pbs_options_parse(int argc, char **argv) {
 	opt->prefix = PBS_DEFAULT_PREFIX;
 	opt->log_level = PBS_DEFAULT_LOG_LEVEL;
 	opt->mode = PBS_DEFAULT_MODE;
+	opt->user = PBS_DEFAULT_USERNAME;
+	opt->group = PBS_DEFAULT_GROUP;
 
   	if(argc==0 || argv==NULL) return(opt);
 
@@ -105,6 +109,9 @@ pbs_options_t *pbs_options_parse(int argc, char **argv) {
 				break;
 			case 'F':
 				opt->log_facility = optarg;
+				break;
+			case 'g':
+				opt->group = optarg;
 				break;
 			case 'h':
 				pbs_usage(0);
@@ -129,6 +136,9 @@ pbs_options_t *pbs_options_parse(int argc, char **argv) {
 				break;
 			case 'r':
 				opt->regex = optarg;
+				break;
+			case 'u':
+				opt->user = optarg;
 				break;
 		}
 	}
@@ -197,6 +207,8 @@ void pbs_usage(int exit_status){
 	"                         has a leading '/' then it will be treated\n"
 	"                         as a file to log to.\n"
 	"                         (default \"%s\")\n"
+        "    -g, --group: GROUP   Group to run as\n"
+	"                         (default \"%s\")\n"
 	"    -L, --log_file FILE: Log file to monitor\n"
 	"                         (default \"%s\")\n"
 	"    --no_daemon:         Do not detach from terminal when in\n"
@@ -210,15 +222,19 @@ void pbs_usage(int exit_status){
 	"                         the first result, and optionally the\n"
 	"                         username as the second result\n"
 	"                         (default \"%s\")\n"
+        "    -u, --user: USERNAME User to run as\n"
+	"                         (default \"%s\")\n"
 	"\n"
 	"Notes: Default for binary flags is off\n"
 	"       Keys are not used in \"daemon\" or \"purge\" mode.\n",
 	STR_NULL_SAFE(pbs_mode_str(PBS_DEFAULT_MODE)),
 	STR_NULL_SAFE(PBS_DEFAULT_DB_FILENAME),
+	STR_NULL_SAFE(PBS_DEFAULT_GROUP),
 	STR_NULL_SAFE(PBS_DEFAULT_LOG_FACILITY),
 	STR_NULL_SAFE(PBS_DEFAULT_LOG_FILENAME),
 	STR_NULL_SAFE(PBS_DEFAULT_PREFIX),
-	STR_NULL_SAFE(PBS_DEFAULT_REGEX)
+	STR_NULL_SAFE(PBS_DEFAULT_REGEX),
+	STR_NULL_SAFE(PBS_DEFAULT_USERNAME)
 	);
 
   	exit(exit_status);
@@ -228,22 +244,26 @@ void pbs_options_log(pbs_options_t *opt){
 	PBS_INFO_UNSAFE(
 		"db_file=\"%s\" "
 		"debug=\"%s\" "
+		"group=\"%s\" "
 		"log_facility=\"%s\" "
 		"log_file=\"%s\" "
 		"mode=\"%s\" "
 		"no_daemon=\"%s\" "
 		"prefix=\"%s\" "
 		"quiet=\"%s\" "
-		"regex=\"%s\"",
+		"regex=\"%s\" "
+		"user=\"%s\"",
 		STR_NULL_SAFE(opt->db_filename),
 		BIN_OPT_STR(opt->log_level == PBS_LOG_LEVEL_DEBUG),
+		STR_NULL_SAFE(opt->group),
 		STR_NULL_SAFE(opt->log_facility),
 		STR_NULL_SAFE(opt->log_filename),
 		STR_NULL_SAFE(pbs_mode_str(opt->mode)),
 		BIN_OPT_STR(opt->no_daemon),
 		STR_NULL_SAFE(opt->prefix),
 		BIN_OPT_STR(opt->log_level == PBS_LOG_LEVEL_QUIET),
-		STR_NULL_SAFE(opt->regex)
+		STR_NULL_SAFE(opt->regex),
+		STR_NULL_SAFE(opt->user)
 	);
 }
 

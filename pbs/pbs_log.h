@@ -37,7 +37,7 @@
 
 #include "pbs_db.h"
 
-#define LOG_IDENT "pbs"
+#define LOG_IDENT "perdition-pbs"
 
 extern vanessa_logger_t *pbs_vl;
 extern int errno;

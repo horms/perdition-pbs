@@ -98,6 +98,8 @@ int main(int argc, char **argv) {
 		goto leave;
 	}
 
+	vanessa_socket_logger_set(pbs_vl);
+
 	opt = pbs_options_parse(argc, argv);
 	if(opt == NULL) {
 		PBS_DEBUG("pbs_options_parse");	
@@ -129,9 +131,17 @@ int main(int argc, char **argv) {
 		vanessa_logger_change_max_priority(pbs_vl, opt->log_level);
 	}
 
+	vanessa_socket_logger_set(pbs_vl);
+
 	if(opt->mode == PBS_MODE_DAEMON || 
 			opt->log_level == PBS_LOG_LEVEL_DEBUG) {
 		pbs_options_log(opt);
+	}
+
+	if(!geteuid() && vanessa_socket_daemon_setid(opt->user, opt->group)){
+		PBS_DEBUG("vanessa_socket_daemon_setid");
+		PBS_ERR("Fatal error setting group and userid. Exiting.");
+		vanessa_socket_daemon_exit_cleanly(-1);
 	}
 
 	/*Set signal handlers*/

@@ -66,6 +66,16 @@
 #define PBS_DEFAULT_LOG_LEVEL PBS_LOG_LEVEL_NORMAL
 #define PBS_DEFAULT_LOG_FACILITY "mail"
 
+#ifdef WITH_GROUP
+#define PBS_DEFAULT_GROUP                        WITH_GROUP
+#else
+#define PBS_DEFAULT_GROUP                        "nobody"
+#endif /* WITH_GROUP */
+#ifdef WITH_USER
+#define PBS_DEFAULT_USERNAME                     WITH_USER
+#else
+#define PBS_DEFAULT_USERNAME                     "nobody"
+#endif /* WITH_USER */
 
 typedef struct {
 	const char *log_filename;
@@ -78,6 +88,8 @@ typedef struct {
 	int log_level;
 	int mode;
 	const char **leftover;
+	const char *user;
+	const char *group;
 } pbs_options_t;
 
 pbs_options_t *pbs_options_parse(int argc, char **argv);
