@@ -40,12 +40,12 @@
 case "$1" in
   start)
        	echo -n "Starting perdition-pbs services: "
-	daemon @prefix@/sbin/perdition-pbs-daemon $FLAGS
-	touch /var/lock/subsys/perdition-pbs-daemon
+	daemon @prefix@/sbin/perdition-pbs $FLAGS
+	touch /var/lock/subsys/perdition-pbs
        	echo
 	;;
   status)
-        status perdition-pbs-daemon
+        status perdition-pbs
 	;;
   restart|reload)
         $0 stop
@@ -53,8 +53,8 @@ case "$1" in
         ;;
   stop)
        	echo -n "Shutting down perdition-pbs services (POP3): "
-	killproc perdition-pbs-daemon
-	rm -f /var/lock/subsys/perdition-pbs-daemon
+	killproc perdition-pbs
+	rm -f /var/lock/subsys/perdition-pbs
        	echo
 	;;
   *)

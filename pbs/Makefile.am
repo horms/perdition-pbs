@@ -26,6 +26,10 @@
 
 sbin_PROGRAMS = perdition-pbs
 
+man_MANS = perdition-pbs.8
+
+EXTRA_DIST = perdition-pbs.8
+
 perdition_pbs_SOURCES = \
 pbs.c \
 pbs_db.c pbs_db.h \
@@ -45,10 +49,13 @@ install-exec-hook:
 	for i in deamon list insert remove setenv purge; do \
                 (cd $(DESTDIR)$(sbindir) && rm -f perdition-pbs-$$i && \
                         ln -sf perdition-pbs perdition-pbs-$$i); \
+                (cd $(DESTDIR)$(mandir)/man8 && rm -f perdition-pbs-$$i.8 && \
+                        ln -sf perdition-pbs.8 perdition-pbs-$$i.8); \
         done
 
 uninstall-local:
 	for i in deamon list insert remove setenv purge; do \
                 rm -f $(DESTDIR)$(sbindir)/perditioni-pbs-$$i; \
+		rm -f $(DESTDIR)$(mandir)/man8/perdition-pbs-$$i.8; \
         done
 

@@ -12,11 +12,13 @@ build-stamp:
 	dh_testdir
 	./configure $(cfg)
 	# Lame libtool workaround that lintian seems keen on
-	sed < libtool > libtool-2 \
-		-e 's/^hardcode_libdir_flag_spec.*$$/hardcode_libdir_flag_spec=" -D__LIBTOOL_IS_A_FOOL__ "/' \
-		-e '/^archive_cmds="/s/"$$/ \\$$deplibs"/'
-	mv libtool-2 libtool 
-	chmod 755 libtool
+	if test -f libtool; then \
+		sed < libtool > libtool-2 \
+			-e 's/^hardcode_libdir_flag_spec.*$$/hardcode_libdir_flag_spec=" -D__LIBTOOL_IS_A_FOOL__ "/' \
+			-e '/^archive_cmds="/s/"$$/ \\$$deplibs"/' ;\
+		mv libtool-2 libtool; \
+		chmod 755 libtool; \
+	fi
 	$(MAKE)
 	touch build-stamp
 
@@ -40,7 +42,7 @@ install: build
   	  install
 
 	./mkinstalldirs $(pwd)/debian/tmp/etc/init.d
-	install -c -m 755 etc/rc.d/init.d/perdition-pbs.debian \
+	install -c -m 755 etc/init.d/perdition-pbs.debian \
 	  $(pwd)/debian/tmp/etc/init.d/perdition-pbs
 
 	./mkinstalldirs $(pwd)/debian/tmp/usr/share/doc/perdition-pbs

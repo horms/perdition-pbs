@@ -2,7 +2,7 @@
 # Makefile.am                                            November 2000
 # Horms                                             horms@vergenet.net
 #
-# perdition
+# perdition-pbs
 # Mail retrieval proxy server
 # Copyright (C) 1999-2002  Horms <horms@vergenet.net>
 # 
@@ -27,14 +27,14 @@ EXTRA_DIST = \
 changelog \
 control \
 copyright \
-perdition.dirs \
-perdition.files \
-perdition.postinst \
-perdition.postrm \
+perdition-pbs.dirs \
+perdition-pbs.files \
+perdition-pbs.postinst \
+perdition-pbs.postrm \
 rules \
 dpkg-checkbuild
 
 clean-local:
 	rm -f *.substvars *.debhelper files
-	rm -r -f perdition perdition-dev perdition-ldap perdition-mysql \
-		perdition-postgresql tmp
+	rm -r -f perdition-pbs perdition-pbs-dev perdition-pbs-ldap perdition-pbs-mysql \
+		perdition-pbs-postgresql tmp
