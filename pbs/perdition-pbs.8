@@ -1,0 +1,224 @@
+.\""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+.\" perdition-pbs.8                                             May 2002
+.\" Horms                                             horms@vergenet.net
+.\"
+.\" perdition-pbs
+.\" Mail retrieval proxy server
+.\" Copyright (C) 1999-2002  Horms <horms@vergenet.net>
+.\" 
+.\" This program is free software; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of the
+.\" License, or (at your option) any later version.
+.\" 
+.\" This program is distributed in the hope that it will be useful, but
+.\" WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+.\" General Public License for more details.
+.\" 
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program; if not, write to the Free Software
+.\" Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
+.\" 02111-1307  USA
+.\"
+.\""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+.TH PERDITION 8 "14th May 2002"
+.SH NAME
+perdition-pbs \- POP3 and IMAP4 proxy server
+.SH SYNOPSIS
+\fBperdition-pbs\fP [-m|--mode daemon|purge] [options]
+.br
+\fBperdition-pbs\fP -m|--mode list [options] [--] [key...]
+.br
+\fBperdition-pbs\fP -m|--mode insert|remove [options] [--] key...
+.br
+\fBperdition-pbs\fP -m|--mode setenv [options] [--] arg...
+.br
+\fBperdition-pbs-daemon\fP [options]
+.br
+\fBperdition-pbs-setenv\fP [options] [--] arg...
+.br
+\fBperdition-pbs-list\fP [options] [--] [key...]
+.br
+\fBperdition-pbs-insert\fP [options] [--] key...
+.br
+\fBperdition-pbs-remove\fP [options] [--] key...
+.br
+\fBperdition-pbs-purge\fP [options]
+.br
+.SH DESCRIPTION
+\fBperdition-pbs\fP is toolkit to provide POP before SMTP support. It may
+be used with any POP server that provides logs that include the
+connection's source IP address when a user is authenticated. This includes
+perdition itself. At this stage the sendmail and qmail SMTP servers are
+supported.
+.P
+When invoked as \fBperdition-pbs-daemon\fP, \fBperdition-pbs-setenv\fP,
+\fBperdition-pbs-list\fP, \fBperdition-pbs-insert\fP,
+\fBperdition-pbs-remove\fP or \fBperdition-pbs-purge\fP then perdition-pbs
+will run in daemon, setenv, list, insert remove or purge mode respectively,
+unless overridden on the command line or in the configuration file.
+.SH OPTIONS
+.TP
+.B \-D, \-\-db_file FILE:
+Name of Berkeley database to access.
+(default "/etc/mail/popauth.db")
+.TP
+.B \-d, \-\-debug:
+Turn on verbose debugging.
+.TP
+.B \-F, \-\-log_facility facility:
+Syslog facility to log to. If the facility has a leading '/' then it will
+be treated as a file. If is "-" or "+" then log to stdout or stderr
+respectively.
+.br
+(default "mail")
+.br
+Notes: If an error occurs before options are read it may be logged to
+stdout. If stdout or stderr are used, then the process will not fork
+and detach from the terminal.
+.TP
+.B \-g, \-\-group group:
+Group to run as.
+.br
+(default "nobody")
+.TP
+.B \-h, \-\-help:
+Display this message
+.TP
+\-\-no_daemon:
+Do not detach from the terminal when in daemon mode.
+.TP
+.B \-\-no_daemon:
+Do not detach from terminal. Makes no sense if \-i|\-\-inetd_mode
+is in operation.
+.TP
+.B \-n, \-\-no_lookup:
+Disable host and port lookup Implies \-B|\-\-no_bind_banner.
+Please note that if this option is enabled, then perdition-pbs will
+not resolve hostnames returned by popmap lookups, thus your popmap
+must return ip addresses instead.
+.TP 
+.B \-p, \-\-prefix STRING:
+Prefix to prepend to keys to be
+.br
+(default "POP:")
+.TP
+.B \-u, \-\-username username:
+Username to run as.
+.br
+(default "nobody")
+.TP
+.B \-q, \-\-quiet:
+Only log errors. Overridden by \-d|\-\-debug
+.TP
+.B \-t, \-\-timeout SECONDS:
+The expire time for entries in the database
+(default 3600)
+.TP 
+.B \-r, \-\-regex REGEX
+Regular expression to use when parsing log file. Should match the ip
+address as the first result, and optionally the username as the second
+result
+.br
+(default "perdition.*Auth: ([^-]+)->[^-]+ user="([^"]+)" ")
+.TP
+\fBNote:\fP Default value for binary flags is off.
+.SH DAEMON MODE
+In daemon mode perdition-pbs monitors the log file specified
+by the \fBlog_filename\fP directive in a similar manner
+to the way that \fBtail\fP works with the -f option.
+.PP
+As lines are added to the log file they are parsed. If they match
+the regular expression specified by the \fBregex\fP directive then
+the ip address matched is concatenated to the prefix specified
+by the \fBprefix\fP directive. The resulting string is added to the
+database as per the \fBdb_filename\fP directive and set to expire 
+according to the timeout given by the \fBtimeout\fP directive.
+.PP 
+If the log file is truncated or a HUP signal is received then
+the log file is reopened. To guard against the possibility that
+the log file does not exist temporarily - for instance because
+it has been moved for log rotation but the new file hasn't been
+created yet - perdition-pbs will sleep and try to open the file,
+repeatedly until it succeeds. This does not apply on startup,
+where the absence of the log file is considered to be a fatal 
+error.
+.PP
+Periodically expired entries will be removed from the database
+by the daemon. Additions and expires are logged to the facility
+specified by the \fBlog_facility\fP directive unless the
+\fBquiet\fP directive is in operation.
+.PP
+.B Init Scripts
+.PP
+In the RPM and Debian distributions an init script has been provided.
+perdition-pbs may be started and stopped in daemon mode using:
+.PP
+/etc/rc.d/perdition-pbs start
+.br
+/etc/rc.d/perdition-pbs stop
+.PP
+If you are using the RPM and you do not want perdition-pbs to run in 
+stand\-alone mode at boot up after installation run:
+.PP
+/sbin/chkconfig \-\-del perdition-pbs
+.PP
+If you are using a Debian installation of perdition-pbs and you do not want 
+perdition-pbs to run in stand\-alone mode at boot up after installation run:
+.PP
+/usr/sbin/update\-rc.d perdition-pbs remove
+.SH SETENV MODE
+This is primarily intended to allow perdition-pbs to work in
+conjunction with qmail. The idea is that instead of running
+qmail-smtp, perdition-pbs --mode setenv is run. 
+.nf
+
+Example
+/usr/sbin/qmail-smtp
+
+becomes
+/usr/sbin/perdition-pbs --mode setenv -- /usr/sbin/qmail-smtp
+.fi
+.PP
+This assumes that qmail-smtp is being run from tcpserver, inetd or similar
+and not as a stand-alone daemon.
+.PP
+perdition-pbs will examine the environment variable TCPREMOTEIP. If this
+doesn't exist then the source IP address of the incoming socket is
+examined. This IP address is is concatenated to the prefix specified by the
+\fBprefix\fP directive. The resulting string is looked up in the database
+as per the \fBdb_filename\fP directive. If it is present and hasn't expired
+the environment variable RELAYCLIENT is set. Regardless,
+the trailing arguments to perdition-pbs are executed,
+in this case /usr/sbin/qmail-smtp. 
+.PP
+Thus qmail-smtp will
+inherit the RELAYCLIENT environment variable if the connecting end
+user's IP address is in the perdition-pbs database.
+By setting this environment variable and by having
+the qmail configuration files control and rcpthosts in place, 
+relaying can be controlled.
+.PP
+Please note that if RELAYCLIENT is already present in the
+environment that perdition-pbs runs in then it is left unchanged.
+.PP
+The setenv mode was inspired by smtp-poplock by David Harris.
+http://www.davideous.com/smtp-poplock/
+.SH LIST MODE
+List the contents of the database.
+.SH INSERT MODE
+Add an entry to the database.
+If the entry is does not begin with the prefix as set by the
+\fBprefix\fP directive then the prefix is prepended.
+.SH REMOVE MODE
+Remove an entry from the database.
+If the entry is does not begin with the prefix as set by the
+\fBprefix\fP directive then the prefix is prepended.
+.SH PURGE MODE
+Delete all entries in the database.
+.SH SEE ALSO
+perdition(8), sendmail(8), qmail(8)
+.SH AUTHOR
+.br
+Horms <horms@vergenet.net>
