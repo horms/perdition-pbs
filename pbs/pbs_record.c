@@ -110,12 +110,35 @@ size_t pbs_key_width(const char *prefix) {
 }
 
 
+char *pbs_record_prefix_key(const char *key, const char *prefix) {
+	size_t prefix_len;
+	size_t key_len;
+	size_t new_key_len;
+	char *new_key;
+
+
+	prefix_len = strlen(prefix);
+	key_len = strlen(key);
+	new_key_len = key_len + prefix_len + 1;
+
+	new_key = (char *)malloc(new_key_len);
+	if(new_key == NULL) {
+		PBS_DEBUG_ERRNO("realloc");
+		return(NULL);
+	}
+	memset(new_key, 0, new_key_len);
+	memcpy(new_key, prefix, prefix_len);
+	memcpy(new_key+prefix_len, key, key_len);
+	
+	return(new_key);
+}
+
 const char *pbs_record_fix_key(const char *key, const char *prefix,
 		char **buf, size_t *buf_len) {
 	size_t prefix_len;
 	size_t k_len;
 
-	prefix_len = strlen(prefix); /* :( */
+	prefix_len = strlen(prefix);
 
 	if(strncmp(key, prefix, prefix_len) == 0) {
 		return(key);
@@ -125,7 +148,7 @@ const char *pbs_record_fix_key(const char *key, const char *prefix,
 	if(*buf_len < prefix_len +k_len + 1) {
 		*buf_len = prefix_len + k_len + 1;
 		*buf = realloc(*buf, *buf_len);
-		if(buf == NULL) {
+		if(*buf == NULL) {
 			PBS_DEBUG_ERRNO("realloc");
 			return(NULL);
 		}

@@ -35,7 +35,8 @@ pbs.c \
 pbs_db.c pbs_db.h \
 pbs_log.h \
 pbs_option.c pbs_option.h \
-pbs_record.c pbs_record.h 
+pbs_record.c pbs_record.h \
+pbs_record_db.c pbs_record_db.h 
 
 #INCLUDES= 
 

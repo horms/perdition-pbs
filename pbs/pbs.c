@@ -42,7 +42,7 @@
 #include <vanessa_socket.h>
 
 #include "pbs_log.h"
-#include "pbs_db.h"
+#include "pbs_record_db.h"
 #include "pbs_option.h"
 #include "pbs_record.h"
 
@@ -525,8 +525,8 @@ static int pbs_consume_line(regex_t *preg, char *line, pbs_db_t *db,
 	}
 
 	expire = time(NULL) + timeout;
-	if(pbs_db_put(db, ip, strlen(ip)+1, &expire, sizeof(expire)) < 0) {
-		PBS_DEBUG("pbs_db_put");
+	if(pbs_record_db_put(db, ip, prefix, expire, ip) < 0) {
+		PBS_DEBUG("pbs_record_store");
 		status = -1;
 	}
 
@@ -646,10 +646,7 @@ static int do_mode_insert(pbs_db_t *db, const char **key, const char *prefix,
 		time_t timeout, int quiet) {
 	size_t width;
 	time_t expire;
-	size_t buf_len = 0;
 	const char **k;
-	const char *k_fixed;
-	char *buf = NULL;
 
 	if(key == NULL) {
 		PBS_DEBUG("no key");
@@ -663,26 +660,15 @@ static int do_mode_insert(pbs_db_t *db, const char **key, const char *prefix,
 		return(-1);
 	}
 
+	expire = time(NULL) + timeout;
 	for(k = key ; *k != NULL; k++) {
-
-		k_fixed = pbs_record_fix_key(*k, prefix, &buf, &buf_len);
-		if(k_fixed == NULL) {
-			PBS_DEBUG("pbs_record_fix_key");
-			return(-1);
-		}
-		expire = time(NULL) + timeout;
-		if(pbs_db_put(db, (char *)k_fixed, strlen(k_fixed)+1,
-					&expire, sizeof(expire)) < 0) {
-			PBS_DEBUG("pbs_db_put");
+		if(pbs_record_db_put(db, *k, prefix, expire, *k) < 0) {
+			PBS_DEBUG("pbs_record_store");
 			return(-1);
 		}
 		if(!quiet) {
 			pbs_record_show((char *)*k, expire, width);
 		}
-	}
-
-	if(buf != NULL) {
-		free(buf);
 	}
 
 	return(0);

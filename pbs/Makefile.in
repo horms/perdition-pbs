@@ -1,4 +1,4 @@
-# Makefile.in generated automatically by automake 1.4 from Makefile.am
+# Makefile.in generated automatically by automake 1.4-p4 from Makefile.am
 
 # Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
 # This Makefile.in is free software; the Free Software Foundation
@@ -99,7 +99,7 @@ man_MANS = perdition-pbs.8
 
 EXTRA_DIST = perdition-pbs.8
 
-perdition_pbs_SOURCES =  pbs.c pbs_db.c pbs_db.h pbs_log.h pbs_option.c pbs_option.h pbs_record.c pbs_record.h 
+perdition_pbs_SOURCES =  pbs.c pbs_db.c pbs_db.h pbs_log.h pbs_option.c pbs_option.h pbs_record.c pbs_record.h pbs_record_db.c pbs_record_db.h 
 
 
 #INCLUDES= 
@@ -119,7 +119,8 @@ DEFS = @DEFS@ -I. -I$(srcdir) -I..
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-perdition_pbs_OBJECTS =  pbs.o pbs_db.o pbs_option.o pbs_record.o
+perdition_pbs_OBJECTS =  pbs.o pbs_db.o pbs_option.o pbs_record.o \
+pbs_record_db.o
 perdition_pbs_LDADD = $(LDADD)
 perdition_pbs_DEPENDENCIES = 
 perdition_pbs_LDFLAGS = 
@@ -136,10 +137,10 @@ DIST_COMMON =  Makefile.am Makefile.in
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
-TAR = gtar
+TAR = tar
 GZIP_ENV = --best
 DEP_FILES =  .deps/pbs.P .deps/pbs_db.P .deps/pbs_option.P \
-.deps/pbs_record.P
+.deps/pbs_record.P .deps/pbs_record_db.P
 SOURCES = $(perdition_pbs_SOURCES)
 OBJECTS = $(perdition_pbs_OBJECTS)
 

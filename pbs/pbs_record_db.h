@@ -1,5 +1,5 @@
 /**********************************************************************
- * pbs_record.h                                                May 2002
+ * pbs_record_db.c                                             May 2002
  * Horms                                             horms@vergenet.net
  *
  * Perdition PBS
@@ -23,28 +23,18 @@
  *
  **********************************************************************/
 
-#ifndef __PBS_TIME_H
-#define __PBS_TIME_H
+#ifndef _PBS_RECORD_DB_H
+#define _PBS_RECORD_DB_H
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include "pbs_db.h"
 
-#include <sys/types.h>
-#include <time.h>
+int pbs_record_db_put(pbs_db_t *db, const char *ip, const char *prefix, 
+		const time_t expire, const char *status);
 
-#ifdef DMALLOC
-#include <dmalloc.h>
-#endif
 
-int pbs_record_show_str(char *ip, char *str, size_t width);
-int pbs_record_show(char *ip, time_t time, size_t width);
-int pbs_record_hrule(size_t width);
-int pbs_record_title(size_t width);
-int pbs_record_top(size_t width);
-size_t pbs_key_width(const char *prefix);
-char *pbs_record_prefix_key(const char *key, const char *prefix);
-const char *pbs_record_fix_key(const char *key, const char *prefix,
-		                char **buf, size_t *buf_len);
+int pbs_record_db_get(pbs_db_t *db, const char *ip, const char *prefix, 
+		time_t *expire, char **status, size_t *status_len);
 
-#endif /* __PBS_TIME_H */
+int pbs_record_db_del(pbs_db_t *db, const char *ip, const char *prefix);
+
+#endif /* _PBS_RECORD_DB_H */
