@@ -75,6 +75,20 @@ int pbs_db_close(pbs_db_t *db) {
 	return(0);
 }
 
+int pbs_db_sync(pbs_db_t *db) {
+	DB *dbp;
+	int status;
+
+	dbp = (DB *)db;
+	status = dbp->sync(dbp, 0);
+	if(status != 0) {
+		PBS_DEBUG_DB("dbp->sync", status);
+		return(-1);
+	}
+
+	return(0);
+}
+
 int pbs_db_put(pbs_db_t *db, void *key, size_t key_len, void *data, 
 		size_t data_len)
 {
@@ -240,7 +254,7 @@ int pbs_db_traverse_func_expire_record(void *db, void *key, size_t key_len,
 	now=*(time_t *)func_data;
 
 
-	if(expire > now && now != ~0) {
+	if(difftime(now, expire) > 0) {
 		return(0);
 	}
 

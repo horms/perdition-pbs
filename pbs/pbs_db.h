@@ -39,6 +39,8 @@ pbs_db_t *pbs_db_open(const char *filename, const int mode);
 
 int pbs_db_close(pbs_db_t *db);
 
+int pbs_db_sync(pbs_db_t *db);
+
 int pbs_db_put(pbs_db_t *db, void *keyp, size_t key_len, void *datap, 
 		size_t data_len);
 

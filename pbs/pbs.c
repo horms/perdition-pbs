@@ -287,7 +287,7 @@ int main(int argc, char **argv) {
 		}
 
 		now = time(NULL);
-		if(now > expire_now) {
+		if(difftime(now, expire_now) < 0) {
 			if(pbs_db_traverse(db, 
 					pbs_db_traverse_func_expire_record, 
 					&now) < 0) {
@@ -359,6 +359,7 @@ int main(int argc, char **argv) {
 			free(line);
 			line = NULL;
 		}
+		pbs_db_sync(db);
 	}
 
 	exit_status = 0;
@@ -718,6 +719,7 @@ static int do_mode_setenv(pbs_db_t *db, const int fd,  const char *prefix,
 	const char *peername_str_fixed;
 	char *buf = NULL;
 	time_t expire;
+	time_t now;
 	size_t len;
 	size_t buf_len = 0;
 
@@ -726,15 +728,18 @@ static int do_mode_setenv(pbs_db_t *db, const int fd,  const char *prefix,
 		return(-2);
 	}
 
-	namelen = sizeof(peername);
-	if(getpeername(fd, (struct sockaddr *)&peername, &namelen)) {
-		PBS_DEBUG_ERRNO("getpeername");
-		return(-1);
-	}
-	peername_str = inet_ntoa(peername.sin_addr);
+	peername_str = getenv("TCPREMOTEIP");
 	if(peername_str == NULL) {
-		PBS_DEBUG_ERRNO("inet_ntoa");
-		return(-1);
+		namelen = sizeof(peername);
+		if(getpeername(fd, (struct sockaddr *)&peername, &namelen)) {
+			PBS_DEBUG_ERRNO("getpeername");
+			return(-1);
+		}
+		peername_str = inet_ntoa(peername.sin_addr);
+		if(peername_str == NULL) {
+			PBS_DEBUG_ERRNO("inet_ntoa");
+			return(-1);
+		}
 	}
 
 	peername_str_fixed = pbs_record_fix_key(peername_str, prefix, 
@@ -744,12 +749,13 @@ static int do_mode_setenv(pbs_db_t *db, const int fd,  const char *prefix,
 		return(-1);
 	}
 
+	now = time(NULL);
 	if(pbs_db_get(db, (char *)peername_str_fixed, 
 			strlen(peername_str_fixed)+1, 
 			(void **)&expire, &len) < 0) {
 		PBS_INFO_UNSAFE("No (Not in database): %s", peername_str);
 	}
-	else if (time(NULL) > expire) {
+	else if (difftime(now, expire) < 0) {
 		PBS_INFO_UNSAFE("No (Expired): %s", peername_str);
 	}
 	else {
