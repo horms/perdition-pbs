@@ -32,7 +32,8 @@ README \
 TODO \
 autogen.sh \
 INSTALL.in \
-INSTALL
+INSTALL \
+TODO
 
 clean-local:
 	rm -f build-stamp
