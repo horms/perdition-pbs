@@ -90,7 +90,7 @@ pbs_options_t *pbs_options_parse(int argc, char **argv) {
 		{"log_file",      'L', POPT_ARG_STRING, NULL, 'L'},
 		{"mode",          'm', POPT_ARG_STRING, NULL, 'm'},
 		{"no_daemon",     'n', POPT_ARG_NONE,   NULL, 'n'},
-		{"perfix",        'p', POPT_ARG_STRING, NULL, 'p'},
+		{"prefix",        'p', POPT_ARG_STRING, NULL, 'p'},
 		{"quiet",         'q', POPT_ARG_NONE,   NULL, 'q'},
 		{"regex",         'r', POPT_ARG_STRING, NULL, 'r'},
 		{"timeout",       't', POPT_ARG_STRING, NULL, 't'},

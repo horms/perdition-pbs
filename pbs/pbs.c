@@ -490,8 +490,7 @@ static int pbs_consume_line(regex_t *preg, char *line, pbs_db_t *db,
 	int status = 0;
 
 	if(regexec(preg, line, PBS_NMATCH, pmatch, 0) != 0) {
-		printf("consume: no match\n");
-		return(-1);
+		return(0);
 	}
 	
 	if(pmatch[1].rm_so == -1 || pmatch[1].rm_eo == -1 ||
