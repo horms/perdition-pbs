@@ -1,0 +1,83 @@
+#!/usr/bin/make -f
+# Sample debian/rules that uses debhelper.
+# GNU copyright 1997 to 1999 by Joey Hess.
+
+export DH_COMPAT=2
+
+pwd:=$(shell pwd)
+cfg:=--prefix=/usr --sysconfdir=/etc --with-group=nogroup --mandir=/usr/share/man
+
+build: checkbuild build-stamp
+build-stamp:
+	dh_testdir
+	./configure $(cfg)
+	# Lame libtool workaround that lintian seems keen on
+	sed < libtool > libtool-2 \
+		-e 's/^hardcode_libdir_flag_spec.*$$/hardcode_libdir_flag_spec=" -D__LIBTOOL_IS_A_FOOL__ "/' \
+		-e '/^archive_cmds="/s/"$$/ \\$$deplibs"/'
+	mv libtool-2 libtool 
+	chmod 755 libtool
+	$(MAKE)
+	touch build-stamp
+
+clean:
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp
+
+	-$(MAKE) distclean
+
+	dh_clean
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k
+	dh_installdirs
+
+	$(MAKE) \
+	  DESTDIR=$(pwd)/debian/tmp \
+  	  install
+
+	./mkinstalldirs $(pwd)/debian/tmp/etc/init.d
+	install -c -m 755 etc/rc.d/init.d/perdition-pbs.debian \
+	  $(pwd)/debian/tmp/etc/init.d/perdition-pbs
+
+	./mkinstalldirs $(pwd)/debian/tmp/usr/share/doc/perdition-pbs
+	install -c -m 644 README \
+	  $(pwd)/debian/tmp/usr/share/doc/perdition-pbs/README
+	gzip --best $(pwd)/debian/tmp/usr/share/doc/perdition-pbs/README
+	install -c -m 644 ChangeLog \
+	  $(pwd)/debian/tmp/usr/share/doc/perdition-pbs/changelog
+	gzip --best $(pwd)/debian/tmp/usr/share/doc/perdition-pbs/changelog
+	install -c -m 644 TODO \
+	  $(pwd)/debian/tmp/usr/share/doc/perdition-pbs/TODO
+	gzip --best $(pwd)/debian/tmp/usr/share/doc/perdition-pbs/TODO
+
+	dh_movefiles --source=debian/tmp
+
+binary-indep: build install
+
+binary-arch: build install
+	dh_testdir
+	dh_testroot
+	dh_installdocs
+	dh_installchangelogs
+	dh_link
+	dh_strip
+	dh_compress
+	dh_fixperms
+	dh_makeshlibs
+	dh_installdeb
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary: binary-indep binary-arch
+
+checkbuild:
+	chmod u+x ./debian/dpkg-checkbuild
+	./debian/dpkg-checkbuild debian/control
+
+.PHONY: build clean binary-indep binary-arch binary install checkbuild

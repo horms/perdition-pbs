@@ -1,0 +1,16 @@
+#! /bin/sh
+# postinst script for perdition-pbs
+
+#DEBHELPER#
+
+if [ "$1" = "configure" ]; then
+    ldconfig
+    if [ -d /usr/doc -a ! -e /usr/doc/perdition-pbs -a -d /usr/share/doc/perdition-pbs ]; then
+      ln -sf ../share/doc/perdition-pbs /usr/doc/perdition-pbs
+    fi
+    update-rc.d perdition-pbs defaults >/dev/null
+fi
+
+exit 0
+
+

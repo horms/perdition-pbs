@@ -1,0 +1,14 @@
+etc/init.d/perdition-pbs
+usr/sbin/perdition-pbs
+usr/sbin/perdition-pbs-daemon
+usr/sbin/perdition-pbs-list
+usr/sbin/perdition-pbs-insert
+usr/sbin/perdition-pbs-remove
+usr/sbin/perdition-pbs-setenv
+usr/sbin/perdition-pbs-purge
+/usr/share/man/man8/perdition-pbs-daemon.8
+/usr/share/man/man8/perdition-pbs-list.8
+/usr/share/man/man8/perdition-pbs-insert.8
+/usr/share/man/man8/perdition-pbs-remove.8
+/usr/share/man/man8/perdition-pbs-setenv.8
+/usr/share/man/man8/perdition-pbs-purge.8

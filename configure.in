@@ -105,4 +105,5 @@ etc/Makefile
 etc/rc.d/Makefile 
 etc/rc.d/perdition-pbs.debian
 etc/rc.d/perdition-pbs.rh
+debian/Makefile
 INSTALL)
