@@ -1,4 +1,5 @@
 perdition-pbs
 .libs
+.deps
 Makefile
 Makefile.in
