@@ -87,6 +87,7 @@ int main(int argc, char **argv) {
 	pbs_db_t *db = NULL;
 	time_t now;
 	time_t expire_now = 0;
+	FILE *fh = NULL;
 
 	setlocale(LC_ALL, "");
 
@@ -107,28 +108,51 @@ int main(int argc, char **argv) {
 		goto leave;
 	}
 
-	/* Update Logger */
-	if(opt->mode == PBS_MODE_DAEMON || opt->mode == PBS_MODE_SETENV){
-  		vanessa_logger_closelog(pbs_vl);
-		if(opt->mode == PBS_MODE_DAEMON) {
-			vanessa_socket_daemon_process();
+	/* Set file descriptor to log to, if any */
+	fh = NULL;
+	if(opt->log_facility!=NULL) {
+		if(strcmp(opt->log_facility, "-") == 0) {
+			fh = stdout;
 		}
-		else {
-			vanessa_socket_daemon_inetd_process();
-		}
-		pbs_vl=vanessa_logger_openlog_syslog_byname(
-				opt->log_facility, LOG_IDENT, 
-				opt->log_level, LOG_CONS);
-		if(pbs_vl == NULL) {
-			fprintf(stderr, 
-				"main: vanessa_logger_openlog_syslog\n"
-				"Fatal error opening logger. Exiting.\n");
-			goto leave;
+		else if(strcmp(opt->log_facility, "+") == 0) {
+			fh = stderr;
 		}
 	}
-	else {
+
+	/* 
+	 * Close file descriptors and detactch process from 
+	 * shell as necessary 
+	 */
+	if(opt->mode != PBS_MODE_DAEMON || opt->no_daemon || fh != NULL){
 		vanessa_socket_daemon_inetd_process();
-		vanessa_logger_change_max_priority(pbs_vl, opt->log_level);
+	}
+	else{
+		vanessa_socket_daemon_process();
+	}
+
+	/*
+	 * Re-create logger now process is detached (unless in inetd mode)
+	 * and configuration file has been read.
+	 */
+	vanessa_logger_closelog(pbs_vl);
+	if(fh != NULL) {
+		pbs_vl = vanessa_logger_openlog_filehandle(fh, LOG_IDENT, 
+				opt->log_level, LOG_CONS);
+	}
+	else if(opt->log_facility!=NULL && *(opt->log_facility)=='/'){
+		pbs_vl = vanessa_logger_openlog_filename(opt->log_facility,
+				LOG_IDENT, opt->log_level, LOG_CONS);
+	}
+	else {
+		pbs_vl = vanessa_logger_openlog_syslog_byname(
+				opt->log_facility, LOG_IDENT,
+				opt->log_level, LOG_CONS);
+	}
+	if(pbs_vl == NULL){
+		fprintf(stderr, 
+			"main: vanessa_logger_openlog\n"
+			"Fatal error opening logger. Exiting.\n");
+		vanessa_socket_daemon_exit_cleanly(-1);
 	}
 
 	vanessa_socket_logger_set(pbs_vl);

@@ -85,7 +85,7 @@ pbs_options_t *pbs_options_parse(int argc, char **argv) {
 	{
 		{"db_file",       'D', POPT_ARG_STRING, NULL, 'D'},
 		{"debug",        'd',  POPT_ARG_NONE,   NULL, 'd'},
-		{"log_facility", 'F',  POPT_ARG_NONE,   NULL, 'F'},
+		{"log_facility", 'F',  POPT_ARG_STRING, NULL, 'F'},
 		{"help",         'h',  POPT_ARG_NONE,   NULL, 'h'},
 		{"log_file",      'L', POPT_ARG_STRING, NULL, 'L'},
 		{"mode",          'm', POPT_ARG_STRING, NULL, 'm'},
@@ -93,6 +93,7 @@ pbs_options_t *pbs_options_parse(int argc, char **argv) {
 		{"perfix",        'p', POPT_ARG_STRING, NULL, 'p'},
 		{"quiet",         'q', POPT_ARG_NONE,   NULL, 'q'},
 		{"regex",         'r', POPT_ARG_STRING, NULL, 'r'},
+		{"timeout",       't', POPT_ARG_STRING, NULL, 't'},
 		{"user",          'u', POPT_ARG_STRING, NULL, 'u'},
 		{"group",         'g', POPT_ARG_STRING, NULL, 'g'},
 		{NULL,             0,  0,               NULL,  0 }
@@ -183,6 +184,9 @@ pbs_options_t *pbs_options_parse(int argc, char **argv) {
 			case 'r':
 				opt->regex = optarg;
 				break;
+			case 't':
+				opt->timeout = atoi(optarg);
+				break;
 			case 'u':
 				opt->user = optarg;
 				break;
@@ -244,17 +248,18 @@ void pbs_usage(int exit_status){
 	"                    (default \"%s\")\n"
 	"\n"
 	"  options:\n"
-	"    -h, --help: print this message\n"
 	"    -D, --db_file FILE:  Database file to access\n"
 	"                         (default \"%s\")\n"
 	"    -d, --debug:         Verbose error messages\n"
 	"    -F, --log_facility FACILITY:\n"
 	"                         Syslog facility to log to. If the faclilty\n"
 	"                         has a leading '/' then it will be treated\n"
-	"                         as a file to log to.\n"
+	"                         as a file to log to. If \"-\" or \"+\" then\n"
+	"                         log to stdout or stderr respectively\n"
 	"                         (default \"%s\")\n"
         "    -g, --group: GROUP   Group to run as\n"
 	"                         (default \"%s\")\n"
+	"    -h, --help: print this message\n"
 	"    -L, --log_file FILE: Log file to monitor\n"
 	"                         (default \"%s\")\n"
 	"    --no_daemon:         Do not detach from terminal when in\n"
@@ -263,15 +268,19 @@ void pbs_usage(int exit_status){
 	"                         (default \"%s\")\n"
 	"                         stored in or retrieved from the database\n"
 	"    -q, --quiet:         Supress all but critical log messages\n"
-	"    -r, --regex: REGEX   Regular expression to use when parsing\n"
+	"    -r, --regex REGEX:   Regular expression to use when parsing\n"
 	"                         log file. Should match the ip address as\n"
 	"                         the first result, and optionally the\n"
 	"                         username as the second result\n"
 	"                         (default \"%s\")\n"
-        "    -u, --user: USERNAME User to run as\n"
+	"    -t, --timeout SECONDS: \n"
+	"                         The expiry time for entries in the\n"
+	"                         database\n"
+	"                         (default %d)\n"
+        "    -u, --user USERNAME: User to run as\n"
 	"                         (default \"%s\")\n"
 	"\n"
-	"Notes: Default for binary flags is off\n",
+	"Note: Default for binary flags is off\n",
 	STR_NULL_SAFE(pbs_mode_str(PBS_DEFAULT_MODE)),
 	STR_NULL_SAFE(PBS_DEFAULT_DB_FILENAME),
 	STR_NULL_SAFE(PBS_DEFAULT_GROUP),
@@ -279,6 +288,7 @@ void pbs_usage(int exit_status){
 	STR_NULL_SAFE(PBS_DEFAULT_LOG_FILENAME),
 	STR_NULL_SAFE(PBS_DEFAULT_PREFIX),
 	STR_NULL_SAFE(PBS_DEFAULT_REGEX),
+	PBS_DEFAULT_TIMEOUT,
 	STR_NULL_SAFE(PBS_DEFAULT_USERNAME)
 	);
 
