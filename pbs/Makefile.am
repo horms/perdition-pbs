@@ -46,7 +46,7 @@ LDADD = -ldb -lpopt \
 -lvanessa_logger -lvanessa_socket @dmalloc_lib@
 
 install-exec-hook:
-	for i in deamon list insert remove setenv purge; do \
+	for i in daemon list insert remove setenv purge; do \
                 (cd $(DESTDIR)$(sbindir) && rm -f perdition-pbs-$$i && \
                         ln -sf perdition-pbs perdition-pbs-$$i); \
                 (cd $(DESTDIR)$(mandir)/man8 && rm -f perdition-pbs-$$i.8 && \
@@ -54,7 +54,7 @@ install-exec-hook:
         done
 
 uninstall-local:
-	for i in deamon list insert remove setenv purge; do \
+	for i in daemon list insert remove setenv purge; do \
                 rm -f $(DESTDIR)$(sbindir)/perditioni-pbs-$$i; \
 		rm -f $(DESTDIR)$(mandir)/man8/perdition-pbs-$$i.8; \
         done
