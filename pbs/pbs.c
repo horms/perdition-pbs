@@ -1,3 +1,28 @@
+/**********************************************************************
+ * pbs.c                                                       May 2002
+ * Horms                                             horms@vergenet.net
+ *
+ * Perdition PBS
+ * Pop Before SMTP Tools
+ * Copyright (C) 2002 Horms
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
+ * 02111-1307  USA
+ *
+ **********************************************************************/
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -12,6 +37,7 @@
 #include <signal.h>
 #include <time.h>
 #include <locale.h>
+#include <string.h>
 #include <vanessa_logger.h>
 #include <vanessa_socket.h>
 
@@ -42,7 +68,8 @@ static int do_mode_insert(pbs_db_t *db, const char **key, const char *prefix,
 static int do_mode_remove(pbs_db_t *db, const char **key, const char *prefix,
 		int quiet);
 static int do_mode_purge(pbs_db_t *db, int quiet);
-static int do_mode_setenv(pbs_db_t *db, const char **key);
+static int do_mode_setenv(pbs_db_t *db, int fd, const char *prefix,
+		const char **key);
 
 static int pbs_exit_now = 0;
 static int pbs_reread_now = 0;
@@ -79,9 +106,14 @@ int main(int argc, char **argv) {
 	}
 
 	/* Update Logger */
-	if(opt->mode == PBS_MODE_DAEMON){
+	if(opt->mode == PBS_MODE_DAEMON || opt->mode == PBS_MODE_SETENV){
   		vanessa_logger_closelog(pbs_vl);
-		vanessa_socket_daemon_process();
+		if(opt->mode == PBS_MODE_DAEMON) {
+			vanessa_socket_daemon_process();
+		}
+		else {
+			vanessa_socket_daemon_inetd_process();
+		}
 		pbs_vl=vanessa_logger_openlog_syslog_byname(
 				opt->log_facility, LOG_IDENT, 
 				opt->log_level, LOG_CONS);
@@ -142,7 +174,7 @@ int main(int argc, char **argv) {
 	}
 
 	if(opt->mode == PBS_MODE_SETENV) {
-		status = do_mode_setenv(db, opt->leftover);
+		status = do_mode_setenv(db, 1, opt->prefix, opt->leftover);
 		if(status == -2) {
 			PBS_ERR("There must be at least one argument "
 					"to setenv");
@@ -511,9 +543,8 @@ static int do_mode_list(pbs_db_t *db, const char **key, const char *prefix) {
 			PBS_DEBUG("pbs_record_fix_key");
 			return(-1);
 		}
-		pbs_db_get(db, (char *)k_fixed, strlen(k_fixed)+1, 
-				(void **)&time, &len);
-		if(time == NULL || len == 0) {
+		if(pbs_db_get(db, (char *)k_fixed, strlen(k_fixed)+1, 
+				(void **)&time, &len) < 0) {
 			pbs_record_show_str((char *)*k, "Not found", width);
 		}
 		else {
@@ -644,18 +675,59 @@ static int do_mode_purge(pbs_db_t *db, int quiet) {
 }
 
 
-static int do_mode_setenv(pbs_db_t *db, const char **key) {
+static int do_mode_setenv(pbs_db_t *db, const int fd,  const char *prefix,
+		const char **argv) {
 	char value = '\0';
+	struct sockaddr_in peername;
+	socklen_t namelen;
+	char *peername_str;
+	const char *peername_str_fixed;
+	char *buf = NULL;
+	time_t expire;
+	size_t len;
+	size_t buf_len = 0;
 
-	PBS_ERR("You need to check the source IP address!!");
-
-	if(key == NULL) {
-		PBS_DEBUG("no key");
+	if(argv == NULL) {
+		PBS_DEBUG("no arguments");
 		return(-2);
 	}
 
-	setenv("RELAYCLIENT", &value, 0);
-	execv(key[0], (char **const)key);
+	namelen = sizeof(peername);
+	if(getpeername(fd, (struct sockaddr *)&peername, &namelen)) {
+		PBS_DEBUG_ERRNO("getpeername");
+		return(-1);
+	}
+	peername_str = inet_ntoa(peername.sin_addr);
+	if(peername_str == NULL) {
+		PBS_DEBUG_ERRNO("inet_ntoa");
+		return(-1);
+	}
+
+	peername_str_fixed = pbs_record_fix_key(peername_str, prefix, 
+			&buf, &buf_len);
+	if(peername_str_fixed == NULL) {
+		PBS_DEBUG("pbs_record_fix_key");
+		return(-1);
+	}
+
+	if(pbs_db_get(db, (char *)peername_str_fixed, 
+			strlen(peername_str_fixed)+1, 
+			(void **)&expire, &len) < 0) {
+		PBS_INFO_UNSAFE("No (Not in database): %s", peername_str);
+	}
+	else if (time(NULL) > expire) {
+		PBS_INFO_UNSAFE("No (Expired): %s", peername_str);
+	}
+	else {
+		PBS_INFO_UNSAFE("Yes: %s, peername_str");
+		setenv("RELAYCLIENT", &value, 0);
+	}
+
+	if(buf != NULL) {
+		free(buf);
+	}
+
+	execv(argv[0], (char **const)argv);
 	PBS_DEBUG_ERRNO("execl");	
 	return(-1);
 }

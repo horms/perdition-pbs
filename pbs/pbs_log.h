@@ -1,12 +1,10 @@
 /**********************************************************************
- * pbs_log.h                                                 September 2000
+ * pbs_log.h                                                   May 2002
  * Horms                                             horms@vergenet.net
  *
- * Defines for logging
- *
- * perdition
- * Mail retrieval proxy server
- * Copyright (C) 1999-2002  Horms
+ * Perdition PBS
+ * Pop Before SMTP Tools
+ * Copyright (C) 2002 Horms
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,7 +14,7 @@
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more depbss.
+ * General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
