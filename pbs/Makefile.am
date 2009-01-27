@@ -50,6 +50,10 @@ install-exec-hook:
 	for i in daemon list insert remove setenv purge; do \
                 (cd $(DESTDIR)$(sbindir) && rm -f perdition-pbs-$$i && \
                         ln -sf perdition-pbs perdition-pbs-$$i); \
+        done
+
+install-data-hook:
+	for i in daemon list insert remove setenv purge; do \
                 (cd $(DESTDIR)$(mandir)/man8 && rm -f perdition-pbs-$$i.8 && \
                         ln -sf perdition-pbs.8 perdition-pbs-$$i.8); \
         done
