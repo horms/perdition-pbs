@@ -26,7 +26,7 @@
 # Process this file with autoconf to produce a configure script.
 AC_INIT(pbs/pbs_log.h)
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(perdition-pbs, 0.0.0df)
+AM_INIT_AUTOMAKE(perdition-pbs, 0.0.0)
 
 # Checks for programs.
 AC_PROG_CXX
