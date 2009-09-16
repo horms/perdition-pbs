@@ -1,10 +1,9 @@
 /**********************************************************************
  * pbs_option.c                                                May 2002
- * Horms                                             horms@vergenet.net
  *
  * Perdition PBS
  * Pop Before SMTP Tools
- * Copyright (C) 2002 Horms
+ * Copyright (C) 2002 Simon Horman <horms@verge.net.au>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -236,7 +235,7 @@ void pbs_usage(int exit_status){
 
     
 	fprintf(stream, 
-	"perdition version " VERSION " Copyright Horms\n"
+	"perdition version " VERSION " Copyright Simon Horman <horms@verge.net.au>
 	"\n"
 	"Usage: " LOG_IDENT " [-m|--mode daemon|purge] [options]\n"
 	"Usage: " LOG_IDENT " -m|--mode list [options] [--] [key...]\n"

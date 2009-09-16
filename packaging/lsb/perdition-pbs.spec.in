@@ -27,7 +27,7 @@ Copyright: GPL
 Group: Applications/Internet
 Source: ftp://ftp.vergenet.net/pub/perdition-pbs/perdition-pbs-%{ver}.tar.gz
 BuildRoot: /var/tmp/perdition-pbs-%{PACKAGE_VERSION}-root
-Packager: Horms <horms@vergenet.net>
+Packager: Simon Horman <horms@verge.net.au>
 URL: http://vergenet.net/linux/perdition-pbs/
 Docdir: %{prefix}/doc
 Provides: perdition-pbs-%{ver}-%{rel}
@@ -123,5 +123,5 @@ rm -rf $RPM_BUILD_ROOT
 %config /etc/sysconfig/perdition-pbs
 
 %changelog
-* Tue May 15 2002 Horms <horms@vergenet.net>
+* Tue May 15 2002 Simon Horman <horms@verge.net.au>
 - Begin

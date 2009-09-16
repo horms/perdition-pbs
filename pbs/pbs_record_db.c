@@ -1,10 +1,9 @@
 /**********************************************************************
  * pbs_record_db.c                                             May 2002
- * Horms                                             horms@vergenet.net
  *
  * Perdition PBS
  * Pop Before SMTP Tools
- * Copyright (C) 2002 Horms
+ * Copyright (C) 2002 Simon Horman <horms@verge.net.au>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
