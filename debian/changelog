@@ -1,8 +1,9 @@
 perdition-pbs (0.0.0-1) unstable; urgency=low
 
-  * A release.
+  * Initial upload
+    (closes: #546831)
 
- -- Simon Horman <horms@vergenet.net>  Tue, 14 May 2002 11:21:16 +1000
+ -- Simon Horman <horms@debian.org>  Wed, 16 Sep 2009 10:48:04 +1000
 
 Local variables:
 mode: debian-changelog
